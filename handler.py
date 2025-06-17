@@ -1,14 +1,12 @@
-import os
 import base64
-
-import torch
-from diffusers import DiffusionPipeline
-from diffusers.utils import load_image
+import os
 
 import runpod
-from runpod.serverless.utils import rp_upload, rp_cleanup
+import torch
+from pruna import PrunaModel
+from runpod.serverless.utils import rp_cleanup, rp_upload
 from runpod.serverless.utils.rp_validator import validate
-from pruna import smash, SmashConfig
+
 from schemas import INPUT_SCHEMA
 
 torch.cuda.empty_cache()
@@ -21,23 +19,9 @@ class ModelHandler:
 
     def load_models(self):
         # Load FLUX.1-dev pipeline from cache using identifier
-        pipe = DiffusionPipeline.from_pretrained(
-            "black-forest-labs/FLUX.1-dev",
-            torch_dtype=torch.float16,
-            local_files_only=True,
-        ).to("cuda")
 
-        # Define Optimisation techniques
-        smash_config = SmashConfig()
-        smash_config["cacher"] = "fora"
-        smash_config["fora_interval"] = 2  # 3, 4
-        smash_config["compiler"] = "torch_compile"
-        smash_config["quantizer"] = "torchao"
-        smash_config["torchao_quant_type"] = "int8dq"
-        smash_config["torchao_excluded_modules"] = "norm+embedding"  # or "none"
-
-        # Smash the pipeline
-        self.pipe = smash(pipe, smash_config)
+        self.pipe = PrunaModel.from_hub("PrunaAI/FLUX.1-dev-smashed")
+        self.pipe.move_to_device("cuda")
 
 
 MODELS = ModelHandler()
@@ -70,7 +54,8 @@ def generate_image(job):
     # -------------------------------------------------------------------------
     # 🐞 DEBUG LOGGING
     # -------------------------------------------------------------------------
-    import json, pprint
+    import json
+    import pprint
 
     # Log the exact structure RunPod delivers so we can see every nesting level.
     print("[generate_image] RAW job dict:")

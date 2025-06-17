@@ -7,7 +7,7 @@
   "config": {
     "runsOn": "GPU",
     "containerDiskInGb": 80,
-    "gpuIds": "ADA_24",
+    "gpuIds": "AMPERE_48",
     "gpuCount": 1,
     "allowedCudaVersions": [
       "12.7",
@@ -18,11 +18,5 @@
       "12.2",
       "12.1"
     ]
-  },
-  "env": [
-    {
-      "key": "HF_TOKEN",
-      "value": "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"
-    }
-  ]
+  }
 }
