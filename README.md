@@ -9,18 +9,22 @@
 
 <br>
 
-[![Documentation](https://img.shields.io/badge/Pruna_documentation-purple?style=for-the-badge)][documentation]
+[![Documentation](https://img.shields.io/badge/Pruna_documentation-purple?style=for-the-badge)](https://docs.pruna.ai)
 
 <br>
 
-[![Website](https://img.shields.io/badge/Pruna.ai-purple?style=flat-square)][website]
-[![X (formerly Twitter) URL](https://img.shields.io/twitter/url?url=https%3A%2F%2Fx.com%2FPrunaAI)][x]
-[![Devto](https://img.shields.io/badge/dev-to-black?style=flat-square)][devto]
-[![Reddit](https://img.shields.io/badge/Follow-r%2FPrunaAI-orange?style=social)][reddit]
-[![Discord](https://img.shields.io/badge/Discord-join_us-purple?style=flat-square)][discord]
-[![Huggingface](https://img.shields.io/badge/Huggingface-models-yellow?style=flat-square)][huggingface]
-[![Replicate](https://img.shields.io/badge/replicate-black?style=flat-square)][replicate]
-[![GitHub](https://img.shields.io/badge/GitHub-100000?style=flat-square&logo=github&logoColor=white)][github]
+<p align="center">
+
+[![Website](https://img.shields.io/badge/Pruna.ai-purple?style=flat-square)](https://pruna.ai)
+[![X (formerly Twitter) URL](https://img.shields.io/twitter/url?url=https%3A%2F%2Fx.com%2FPrunaAI)](https://x.com/PrunaAI)
+[![Devto](https://img.shields.io/badge/dev-to-black?style=flat-square)](https://dev.to/prunaai)
+[![Reddit](https://img.shields.io/badge/Follow-r%2FPrunaAI-orange?style=social)](https://reddit.com/r/PrunaAI)
+[![Discord](https://img.shields.io/badge/Discord-join_us-purple?style=flat-square)](https://discord.gg/prunaai)
+[![Huggingface](https://img.shields.io/badge/Huggingface-models-yellow?style=flat-square)](https://huggingface.co/PrunaAI)
+[![Replicate](https://img.shields.io/badge/replicate-black?style=flat-square)](https://replicate.com/prunaai)
+[![GitHub](https://img.shields.io/badge/GitHub-100000?style=flat-square&logo=github&logoColor=white)](https://github.com/PrunaAI)
+
+</p>
 
 <br>
 
