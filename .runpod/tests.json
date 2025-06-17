@@ -27,5 +27,11 @@
       "12.2",
       "12.1"
     ]
-  }
+  },
+  "env": [
+    {
+      "key": "HF_TOKEN",
+      "value": "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"
+    }
+  ]
 }

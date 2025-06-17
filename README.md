@@ -1,11 +1,10 @@
 <div align="center">
 
-<img src="https://github.com/PrunaAI/pruna/raw/main/docs/assets/images/logo.png" alt="Pruna AI Logo" width=400></img>
+<img src="https://github.com/PrunaAI/pruna/raw/main/docs/assets/images/logo.png" alt="Pruna AI Logo" width="400">
 
-
-  <img src="https://github.com/PrunaAI/pruna/raw/main/docs/assets/images/element.png" alt="Element" width=10></img>
+  <img src="https://github.com/PrunaAI/pruna/raw/main/docs/assets/images/element.png" alt="Element" width="10">
   **Simply make AI models faster, cheaper, smaller, greener!**
-  <img src="https://github.com/PrunaAI/pruna/raw/main/docs/assets/images/element.png" alt="Element" width=10></img>
+  <img src="https://github.com/PrunaAI/pruna/raw/main/docs/assets/images/element.png" alt="Element" width="10">
 
 <br>
 
@@ -28,11 +27,13 @@
 
 <br>
 
-<img src="https://github.com/PrunaAI/pruna/raw/main/docs/assets/images/triple_line.png" alt="Pruna AI Logo" width=600, height=30></img>
+<img src="https://github.com/PrunaAI/pruna/raw/main/docs/assets/images/triple_line.png" alt="Pruna AI Logo" width="600" height="30">
 
 </div>
 
-![FLUX.1-dev Worker Banner](https://huggingface.co/datasets/PrunaAI/documentation-images/resolve/main/diffusers/flux_smashed_comparison.png)
+<img src="https://huggingface.co/datasets/PrunaAI/documentation-images/resolve/main/diffusers/flux_smashed_comparison.png" alt="FLUX.1-dev Worker Banner" width="100%">
+
+---
 
 We can optimize any diffusers models and optimized FLUX.1-dev using the following techniques:
 
