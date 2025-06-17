@@ -6,7 +6,7 @@
   "iconUrl": "https://framerusercontent.com/images/1zpNZDseKMJxNFweAzbVFUyrn8.svg",
   "config": {
     "runsOn": "GPU",
-    "containerDiskInGb": 20,
+    "containerDiskInGb": 80,
     "gpuIds": "ADA_24",
     "gpuCount": 1,
     "allowedCudaVersions": [
@@ -18,5 +18,8 @@
       "12.2",
       "12.1"
     ]
+  },
+  "env": {
+    "HF_TOKEN": "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"
   }
 }
