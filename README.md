@@ -27,6 +27,11 @@ We can optimize any diffusers models and optimized FLUX.1-dev using the followin
 
 Run an optimized [FLUX.1-dev](https://huggingface.co/black-forest-labs/FLUX.1-dev) as a serverless endpoint to generate images.
 
+
+> **⚠️ Important Notes:**
+> - **Compilation Time**: The first request may take 2-3 minutes as the model compiles for optimal performance
+> - **Warmup Time**: Subsequent requests will be faster but may still have a brief warmup period
+
 ---
 
 [![RunPod](https://api.runpod.io/badge/runpod-workers/worker-flux1-dev)](https://www.runpod.io/console/hub/PrunaAI/runpod-worker-FLUX.1-dev)
