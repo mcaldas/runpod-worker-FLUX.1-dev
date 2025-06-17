@@ -12,4 +12,5 @@ triton
 huggingface-hub
 hf_transfer
 hf_xet
-setuptools 
+setuptools
+pruna==0.2.5
