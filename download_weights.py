@@ -1,5 +1,4 @@
-import torch
-from diffusers import DiffusionPipeline
+from pruna import PrunaModel
 
 
 def fetch_pretrained_model(model_name, **kwargs):
@@ -9,7 +8,7 @@ def fetch_pretrained_model(model_name, **kwargs):
     max_retries = 3
     for attempt in range(max_retries):
         try:
-            return DiffusionPipeline.from_pretrained(model_name, **kwargs)
+            return PrunaModel.from_hub(model_name, **kwargs)
         except OSError as err:
             if attempt < max_retries - 1:
                 print(
@@ -23,10 +22,7 @@ def get_diffusion_pipelines():
     """
     Fetches the FLUX.1-dev pipeline from the HuggingFace model hub.
     """
-    pipe = fetch_pretrained_model(
-        "black-forest-labs/FLUX.1-dev",
-        torch_dtype=torch.float16,
-    )
+    pipe = fetch_pretrained_model("PrunaAI/FLUX.1-dev-smashed")
 
     return pipe
 
