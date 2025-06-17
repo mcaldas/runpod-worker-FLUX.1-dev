@@ -1,18 +1,8 @@
-<div align="center">
+[![Pruna AI Logo](https://github.com/PrunaAI/pruna/raw/main/docs/assets/images/logo.png)](https://pruna.ai)
 
-<img src="https://github.com/PrunaAI/pruna/raw/main/docs/assets/images/logo.png" alt="Pruna AI Logo" width="400">
-
-  <img src="https://github.com/PrunaAI/pruna/raw/main/docs/assets/images/element.png" alt="Element" width="10">
-  **Simply make AI models faster, cheaper, smaller, greener!**
-  <img src="https://github.com/PrunaAI/pruna/raw/main/docs/assets/images/element.png" alt="Element" width="10">
-
-<br>
+**Simply make AI models faster, cheaper, smaller, greener!**
 
 [![Documentation](https://img.shields.io/badge/Pruna_documentation-purple?style=for-the-badge)](https://docs.pruna.ai)
-
-<br>
-
-<p align="center">
 
 [![Website](https://img.shields.io/badge/Pruna.ai-purple?style=flat-square)](https://pruna.ai)
 [![X (formerly Twitter) URL](https://img.shields.io/twitter/url?url=https%3A%2F%2Fx.com%2FPrunaAI)](https://x.com/PrunaAI)
@@ -23,27 +13,19 @@
 [![Replicate](https://img.shields.io/badge/replicate-black?style=flat-square)](https://replicate.com/prunaai)
 [![GitHub](https://img.shields.io/badge/GitHub-100000?style=flat-square&logo=github&logoColor=white)](https://github.com/PrunaAI)
 
-</p>
+![Pruna AI Logo](https://github.com/PrunaAI/pruna/raw/main/docs/assets/images/triple_line.png)
 
-<br>
-
-<img src="https://github.com/PrunaAI/pruna/raw/main/docs/assets/images/triple_line.png" alt="Pruna AI Logo" width="600" height="30">
-
-</div>
-
-<img src="https://huggingface.co/datasets/PrunaAI/documentation-images/resolve/main/diffusers/flux_smashed_comparison.png" alt="FLUX.1-dev Worker Banner" width="100%">
+![FLUX.1-dev Worker Banner](https://huggingface.co/datasets/PrunaAI/documentation-images/resolve/main/diffusers/flux_smashed_comparison.png)
 
 ---
 
 We can optimize any diffusers models and optimized FLUX.1-dev using the following techniques:
 
-<img src="https://huggingface.co/datasets/PrunaAI/documentation-images/resolve/main/diffusers/flux_combination.png" alt="FLUX.1-dev-juiced Generated Optimisation techniques" width="100%">
+![FLUX.1-dev-juiced Generated Optimisation techniques](https://huggingface.co/datasets/PrunaAI/documentation-images/resolve/main/diffusers/flux_combination.png)
 
 ---
 
 Run an optimized [FLUX.1-dev](https://huggingface.co/black-forest-labs/FLUX.1-dev) as a serverless endpoint to generate images.
-
-> ⚠️ **Warning**: Make sure to add your Hugging Face token as an environment variable `HF_TOKEN` to access the model. You can get your token from [Hugging Face settings](https://huggingface.co/settings/tokens).
 
 ---
 
