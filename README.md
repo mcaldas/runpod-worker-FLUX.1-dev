@@ -42,9 +42,11 @@ We can optimize any diffusers models and optimized FLUX.1-dev using the followin
 
 Run an optimized [FLUX.1-dev](https://huggingface.co/black-forest-labs/FLUX.1-dev) as a serverless endpoint to generate images.
 
+> ⚠️ **Warning**: Make sure to add your Hugging Face token as an environment variable `HF_TOKEN` to access the model. You can get your token from [Hugging Face settings](https://huggingface.co/settings/tokens).
+
 ---
 
-[![RunPod](https://api.runpod.io/badge/runpod-workers/worker-flux1-dev)](https://www.runpod.io/console/hub/runpod-workers/worker-flux1-dev)
+[![RunPod](https://api.runpod.io/badge/runpod-workers/worker-flux1-dev)](https://www.runpod.io/console/hub/PrunaAI/runpod-worker-FLUX.1-dev)
 
 ---
 
