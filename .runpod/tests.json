@@ -16,7 +16,9 @@
     }
   ],
   "config": {
-    "gpuTypeId": "NVIDIA GeForce RTX 4090",
+    "runsOn": "GPU",
+    "containerDiskInGb": 80,
+    "gpuIds": "AMPERE_48",
     "gpuCount": 1,
     "allowedCudaVersions": [
       "12.7",
