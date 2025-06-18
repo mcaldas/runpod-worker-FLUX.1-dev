@@ -18,7 +18,7 @@
   "config": {
     "runsOn": "GPU",
     "containerDiskInGb": 80,
-    "gpuIds": "AMPERE_48",
+    "gpuIds": "NVIDIA L40",
     "gpuCount": 1,
     "allowedCudaVersions": [
       "12.7",
