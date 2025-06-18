@@ -1,0 +1,32 @@
+{
+  "tests": [
+    {
+      "name": "basic_test",
+      "input": {
+        "prompt": "a majestic steampunk dragon soaring through a cloudy sky, intricate clockwork details, golden hour lighting, highly detailed",
+        "negative_prompt": "blurry, very low quality, deformed, ugly, text, watermark, signature,",
+        "height": 1024,
+        "width": 1024,
+        "num_inference_steps": 25,
+        "guidance_scale": 7.5,
+        "seed": 1337,
+        "num_images": 1
+      },
+      "timeout": 10000
+    }
+  ],
+  "config": {
+    "runsOn": "GPU",
+    "gpuTypeId": "NVIDIA L40",
+    "gpuCount": 1,
+    "allowedCudaVersions": [
+      "12.7",
+      "12.6",
+      "12.5",
+      "12.4",
+      "12.3",
+      "12.2",
+      "12.1"
+    ]
+  }
+}
