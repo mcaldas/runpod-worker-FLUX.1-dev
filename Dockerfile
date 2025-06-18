@@ -1,41 +1,40 @@
 # base image with cuda 12.1
-FROM nvidia/cuda:12.1.1-cudnn8-runtime-ubuntu22.04
+FROM nvidia/cuda:12.1.0-base-ubuntu22.04
 
-# install python 3.11 and pip
+# install system dependencies
 ENV DEBIAN_FRONTEND=noninteractive
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    software-properties-common \
-    && add-apt-repository ppa:deadsnakes/ppa \
-    && apt-get update && apt-get install -y --no-install-recommends \
-    python3.11 \
-    python3.11-venv \
-    python3-pip \
-    git \
-    && rm -rf /var/lib/apt/lists/*
+ENV TZ=Etc/UTC
 
-# set python3.11 as the default python
-RUN ln -sf /usr/bin/python3.11 /usr/local/bin/python && \
-    ln -sf /usr/bin/python3.11 /usr/local/bin/python3
+RUN apt-get update && \
+    apt-get install -y wget curl git vim sudo cmake build-essential \
+    libssl-dev libffi-dev python3-dev python3-venv python3-pip libsndfile1 && \
+    rm -rf /var/lib/apt/lists/*
 
-# install uv
-RUN pip install uv
+# install python packages
+RUN pip3 install packaging psutil pexpect ipywidgets jupyterlab ipykernel \
+    librosa soundfile
 
-# create venv
-ENV PATH="/.venv/bin:${PATH}"
-RUN uv venv --python 3.11 /.venv
+# upgrade pip
+RUN pip3 install --upgrade pip
 
-# install dependencies
-RUN uv pip install torch --extra-index-url https://download.pytorch.org/whl/cu121
+# install pruna
+RUN pip3 install pruna==0.2.5
+
+# install ipython kernel
+RUN python3 -m ipykernel install --user --name pruna_cuda12 --display-name "Python (pruna_cuda12)"
+
+# install torch with cuda support
+RUN pip3 install torch --extra-index-url https://download.pytorch.org/whl/cu121
 
 # install remaining dependencies from PyPI
 COPY requirements.txt /requirements.txt
-RUN uv pip install -r /requirements.txt
+RUN pip3 install -r /requirements.txt
 
 # copy files
 COPY download_weights.py schemas.py handler.py test_input.json /
 
 # download the weights from hugging face
-RUN python /download_weights.py
+RUN python3 /download_weights.py
 
 # run the handler
-CMD python -u /handler.py
+CMD python3 -u /handler.py
