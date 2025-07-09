@@ -91,4 +91,4 @@ which is producing an output like this:
 
 and when you convert the base64-encoded image into an actual image, it looks like this:
 
-<img src="https://huggingface.co/datasets/PrunaAI/documentation-images/resolve/main/diffusers/flux_smashed_comparison.png" alt="FLUX.1-dev-juiced Generated Image: 'A knitted purple prune'" width="512" height="512">
+![FLUX.1-dev-juiced Generated Image: 'A knitted purple prune'](https://huggingface.co/datasets/PrunaAI/documentation-images/resolve/main/diffusers/flux_smashed_comparison.png)
