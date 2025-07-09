@@ -17,7 +17,7 @@
   ],
   "config": {
     "runsOn": "GPU",
-    "gpuTypeId": "NVIDIA H100 PCIe",
+    "gpuTypeId": "NVIDIA GeForce RTX 5090",
     "gpuCount": 1,
     "allowedCudaVersions": [
       "12.7",
