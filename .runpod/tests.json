@@ -18,7 +18,7 @@
   "config": {
     "runsOn": "GPU",
     "gpuTypeId": "NVIDIA GeForce RTX 5090",
-    "gpuCount": 1,
+    "gpuCount": 2,
     "allowedCudaVersions": [
       "12.7",
       "12.6",

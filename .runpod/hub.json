@@ -8,7 +8,7 @@
     "runsOn": "GPU",
     "containerDiskInGb": 80,
     "gpuIds": "NVIDIA GeForce RTX 5090",
-    "gpuCount": 1,
+    "gpuCount": 2,
     "allowedCudaVersions": [
       "12.7",
       "12.6",
@@ -17,6 +17,43 @@
       "12.3",
       "12.2",
       "12.1"
+    ],
+    "presets": [
+      {
+        "name": "FLUX.1-dev-juiced (no compilation)",
+        "defaults": {
+          "HF_MODEL": "PrunaAI/FLUX.1-dev-smashed-no-compile"
+        }
+      },
+      {
+        "name": "FLUX.1-dev-juiced (compilation)",
+        "defaults": {
+          "HF_MODEL": "PrunaAI/FLUX.1-dev-smashed"
+        }
+      },
+      {
+        "name": "FLUX.1-schnell-juiced (no compilation)",
+        "defaults": {
+          "HF_MODEL": "PrunaAI/FLUX.1-schnell-smashed-no-compile"
+        }
+      },
+      {
+        "name": "FLUX.1-schnell-juiced (compilation)",
+        "defaults": {
+          "HF_MODEL": "PrunaAI/FLUX.1-schnell-smashed"
+        }
+      }
+    ],
+    "env": [
+      {
+        "key": "HF_MODEL",
+        "input": {
+          "type": "huggingface",
+          "name": "Hugging Face Model",
+          "description": "Pruna AI FLUX model and organization/name as listed on Huggingface Hub",
+          "default": "PrunaAI/FLUX.1-dev-smashed-no-compile"
+        }
+      }
     ]
   }
 }
