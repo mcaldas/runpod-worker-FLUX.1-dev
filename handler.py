@@ -21,7 +21,8 @@ class ModelHandler:
         # Load FLUX.1-dev pipeline from cache using identifier
 
         self.pipe = PrunaModel.from_hub(
-            "PrunaAI/FLUX.1-dev-smashed-no-compile", local_files_only=True
+            os.environ.get("HF_MODEL", "PrunaAI/FLUX.1-dev-smashed-no-compile"),
+            local_files_only=True,
         )
         self.pipe.move_to_device("cuda")
 
