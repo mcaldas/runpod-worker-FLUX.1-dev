@@ -1,3 +1,5 @@
+import os
+
 from pruna import PrunaModel
 
 
@@ -22,7 +24,9 @@ def get_diffusion_pipelines():
     """
     Fetches the FLUX.1-dev pipeline from the HuggingFace model hub.
     """
-    pipe = fetch_pretrained_model("PrunaAI/FLUX.1-dev-smashed")
+    pipe = fetch_pretrained_model(
+        os.environ.get("HF_MODEL", "PrunaAI/FLUX.1-dev-smashed-no-compile")
+    )
 
     return pipe
 
