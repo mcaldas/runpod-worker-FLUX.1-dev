@@ -59,7 +59,6 @@ The worker accepts the following input parameters:
 {
   "input": {
     "prompt": "a knitted purple prune",
-    "negative_prompt": None,
     "height": 1024,
     "width": 1024,
     "num_inference_steps": 25,
