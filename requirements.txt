@@ -12,3 +12,5 @@ hf_transfer
 hf_xet
 setuptools
 pruna==0.2.5
+peft>=0.10.0
+requests>=2.31.0

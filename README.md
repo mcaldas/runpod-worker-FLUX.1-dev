@@ -52,6 +52,9 @@ The worker accepts the following input parameters:
 | `num_inference_steps`     | `int`   | `25`     | No        | Number of denoising steps for the base model                                                                        |
 | `guidance_scale`          | `float` | `7.5`    | No        | Classifier-Free Guidance scale. Higher values lead to images closer to the prompt, lower values more creative       |
 | `num_images`              | `int`   | `1`      | No        | Number of images to generate per prompt (Constraint: must be 1 or 2)                                                |
+| `lora_urls`               | `list`  | `[]`     | No        | List of URLs or file paths to LoRA model files                                                                     |
+| `lora_scales`             | `list`  | `[]`     | No        | List of scale factors for each LoRA (must match lora_urls length)                                                  |
+| `lora_names`              | `list`  | `[]`     | No        | List of names for each LoRA (must match lora_urls length)                                                          |
 
 ### Example Request
 
@@ -68,6 +71,63 @@ The worker accepts the following input parameters:
   }
 }
 ```
+
+### Example with LoRA
+
+```json
+{
+  "input": {
+    "prompt": "A cute golden retriever puppy playing in a sunlit meadow, realistic style",
+    "negative_prompt": "blurry, low quality, deformed, ugly, text, watermark, signature",
+    "height": 1024,
+    "width": 1024,
+    "num_inference_steps": 25,
+    "guidance_scale": 7.5,
+    "seed": 123,
+    "num_images": 1,
+    "lora_urls": [
+      "/path/to/dog_style_lora.safetensors",
+      "/path/to/realistic_style_lora.safetensors"
+    ],
+    "lora_scales": [0.8, 0.6],
+    "lora_names": ["dog_style", "realistic_style"]
+  }
+}
+```
+
+### Example with LoRA from URLs
+
+```json
+{
+  "input": {
+    "prompt": "A cute golden retriever puppy playing in a sunlit meadow, realistic style, highly detailed",
+    "negative_prompt": "blurry, low quality, deformed, ugly, text, watermark, signature",
+    "height": 1024,
+    "width": 1024,
+    "num_inference_steps": 25,
+    "guidance_scale": 7.5,
+    "seed": 123,
+    "num_images": 1,
+    "lora_urls": [
+      "https://civitai.com/api/download/models/12345",
+      "https://huggingface.co/username/lora-repo/resolve/main/realistic_style.safetensors"
+    ],
+    "lora_scales": [0.8, 0.6],
+    "lora_names": ["dog_style", "realistic_style"]
+  }
+}
+```
+
+### LoRA Usage Notes
+
+- **LoRA Support**: The worker supports loading and applying multiple LoRA models during image generation
+- **File Formats**: Currently supports SafeTensors format LoRA files
+- **Scaling**: Each LoRA can have its own scale factor (0.0 to 1.0) to control influence strength
+- **Multiple LoRAs**: You can apply multiple LoRAs simultaneously for combined effects
+- **Performance**: LoRAs are loaded per-request and cleared afterward to maintain memory efficiency
+- **Caching**: Downloaded LoRAs are cached locally for 24 hours to improve performance on repeated requests
+- **URL Support**: Supports direct SafeTensors URLs from Civitai, Hugging Face, and other sources
+- **Headers**: Automatically sets appropriate headers for different platforms (e.g., Referer for Civitai)
 
 which is producing an output like this:
 

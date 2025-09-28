@@ -1,0 +1,18 @@
+{
+  "input": {
+    "prompt": "A cute golden retriever puppy playing in a sunlit meadow, realistic style",
+    "negative_prompt": "blurry, low quality, deformed, ugly, text, watermark, signature",
+    "height": 1024,
+    "width": 1024,
+    "num_inference_steps": 25,
+    "guidance_scale": 7.5,
+    "seed": 123,
+    "num_images": 1,
+    "lora_urls": [
+      "/path/to/dog_style_lora.safetensors",
+      "/path/to/realistic_style_lora.safetensors"
+    ],
+    "lora_scales": [0.8, 0.6],
+    "lora_names": ["dog_style", "realistic_style"]
+  }
+}

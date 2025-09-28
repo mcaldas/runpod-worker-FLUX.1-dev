@@ -39,4 +39,19 @@ INPUT_SCHEMA = {
         'default': 1,
         'constraints': lambda img_count: 3 > img_count > 0
     },
+    'lora_urls': {
+        'type': list,
+        'required': False,
+        'default': []
+    },
+    'lora_scales': {
+        'type': list,
+        'required': False,
+        'default': []
+    },
+    'lora_names': {
+        'type': list,
+        'required': False,
+        'default': []
+    },
 }
