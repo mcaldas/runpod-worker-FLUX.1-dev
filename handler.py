@@ -9,7 +9,8 @@ from urllib.parse import urlparse
 import requests
 import runpod
 import torch
-from peft import PeftModel, LoraConfig, get_peft_model
+from diffusers import FluxPipeline
+from peft import LoraConfig
 from pruna import PrunaModel
 from runpod.serverless.utils import rp_cleanup, rp_upload
 from runpod.serverless.utils.rp_validator import validate
@@ -174,6 +175,19 @@ class LoRAHandler:
             print(f"[LoRAHandler] Error getting cache stats: {e}")
             return {}
 
+    def _get_diffusers_pipe(self, pruna_model: PrunaModel) -> Optional[FluxPipeline]:
+        """Extract underlying Diffusers pipeline from PrunaModel."""
+        try:
+            pipe = getattr(pruna_model, "pipeline", None)
+            if pipe is None:
+                pipe = getattr(pruna_model, "model", None)
+            if pipe is None:
+                print("[LoRAHandler] Unable to access underlying Flux pipeline from PrunaModel")
+            return pipe
+        except Exception as exc:
+            print(f"[LoRAHandler] Failed retrieving Flux pipeline: {exc}")
+            return None
+
     def apply_loras_to_pipe(self, pipe: PrunaModel, lora_names: List[str], lora_scales: List[float]) -> bool:
         """
         Apply specified LoRAs to the pipeline.
@@ -189,7 +203,11 @@ class LoRAHandler:
         try:
             print(f"[LoRAHandler] Applying {len(lora_names)} LoRAs to pipeline")
 
-            # Clear any existing adapters
+            diffusers_pipe = self._get_diffusers_pipe(pipe)
+            if diffusers_pipe is None:
+                raise RuntimeError("Unable to access underlying Flux pipeline; cannot apply LoRAs.")
+
+            # Unload existing LoRAs before applying new ones
             self.clear_adapters(pipe)
 
             applied_adapters = []
@@ -202,20 +220,33 @@ class LoRAHandler:
                         break
 
                 if adapter_name is None:
-                    print(f"[LoRAHandler] LoRA {name} not found in loaded LoRAs")
-                    continue
+                    raise RuntimeError(f"LoRA '{name}' not found in loaded cache; ensure load_lora() succeeded.")
 
-                # Apply LoRA to the pipeline
-                # Note: This is a simplified approach - real implementation would need
-                # to work with the actual PrunaModel structure
-                print(f"[LoRAHandler] Applied LoRA {name} with scale {scale}")
+                try:
+                    # Load LoRA weights onto the Diffusers pipeline
+                    diffusers_pipe.load_lora_weights(
+                        adapter_path=self.loaded_loras[adapter_name]['path'],
+                        adapter_name=adapter_name,
+                        low_cpu_mem_usage=True
+                    )
 
-                # Store applied adapter info
-                applied_adapters.append({
-                    'name': name,
-                    'adapter_name': adapter_name,
-                    'scale': scale
-                })
+                    # Configure LoRA scaling
+                    scale_value = scale if not isinstance(scale, list) else scale[0]
+                    diffusers_pipe.set_adapters({adapter_name: scale_value})
+
+                    applied_adapters.append({
+                        'name': name,
+                        'adapter_name': adapter_name,
+                        'scale': scale_value
+                    })
+
+                    print(f"[LoRAHandler] Applied LoRA {name} with scale {scale_value}")
+                except Exception as exc:
+                    raise RuntimeError(f"Failed to apply LoRA '{name}': {exc}") from exc
+
+            if len(applied_adapters) != len(lora_names):
+                missing = set(lora_names) - {adapter['name'] for adapter in applied_adapters}
+                raise RuntimeError(f"Not all LoRAs were applied successfully: {missing}")
 
             self.current_adapters = applied_adapters
             print(f"[LoRAHandler] Successfully applied {len(applied_adapters)} LoRAs")
@@ -228,11 +259,29 @@ class LoRAHandler:
     def clear_adapters(self, pipe: PrunaModel):
         """Clear any currently applied LoRA adapters."""
         try:
-            # Reset pipeline to remove any applied LoRAs
+            diffusers_pipe = self._get_diffusers_pipe(pipe)
+            if diffusers_pipe is None:
+                return
+
+            if hasattr(diffusers_pipe, "unload_lora_weights"):
+                for adapter in self.current_adapters:
+                    try:
+                        diffusers_pipe.unload_lora_weights(adapter['adapter_name'])
+                    except Exception as exc:
+                        print(f"[LoRAHandler] Failed unloading adapter {adapter['adapter_name']}: {exc}")
+
+            # Reset pipeline state if supported
+            if hasattr(diffusers_pipe, "set_adapters"):
+                try:
+                    diffusers_pipe.set_adapters({})
+                except Exception as exc:
+                    print(f"[LoRAHandler] Error clearing adapter scales: {exc}")
+
             print("[LoRAHandler] Clearing LoRA adapters")
-            self.current_adapters = []
         except Exception as e:
             print(f"[LoRAHandler] Error clearing adapters: {e}")
+        finally:
+            self.current_adapters = []
 
 
 class ModelHandler:
@@ -357,11 +406,18 @@ def generate_image(job):
 
         # Apply LoRAs to pipeline
         if loaded_lora_names:
-            lora_applied = MODELS.lora_handler.apply_loras_to_pipe(
-                MODELS.pipe, loaded_lora_names, lora_scales[:len(loaded_lora_names)]
-            )
-            if not lora_applied:
-                print("[generate_image] Warning: Failed to apply LoRAs, continuing without them")
+            try:
+                lora_applied = MODELS.lora_handler.apply_loras_to_pipe(
+                    MODELS.pipe, loaded_lora_names, lora_scales[:len(loaded_lora_names)]
+                )
+            except RuntimeError as exc:
+                error_message = f"LoRA application failed: {exc}"
+                print(f"[generate_image] {error_message}")
+                return {
+                    "error": error_message,
+                    "details": {"lora_error": str(exc)},
+                    "refresh_worker": False,
+                }
 
     try:
         # Generate image using FLUX.1-dev pipeline
