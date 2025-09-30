@@ -295,7 +295,7 @@ class ModelHandler:
         load_kwargs = {
             "torch_dtype": torch_dtype,
             "use_safetensors": True,
-            "local_files_only": local_files_only,
+            "local_files_only": local_files_only,    
         }
         if use_auth_token:
             load_kwargs["use_auth_token"] = use_auth_token
