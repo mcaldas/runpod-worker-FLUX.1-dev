@@ -11,7 +11,6 @@ import runpod
 import torch
 from diffusers import FluxPipeline
 from peft import LoraConfig
-from pruna import PrunaModel
 from runpod.serverless.utils import rp_cleanup, rp_upload
 from runpod.serverless.utils.rp_validator import validate
 
@@ -175,20 +174,18 @@ class LoRAHandler:
             print(f"[LoRAHandler] Error getting cache stats: {e}")
             return {}
 
-    def _get_diffusers_pipe(self, pruna_model: PrunaModel) -> Optional[FluxPipeline]:
-        """Extract underlying Diffusers pipeline from PrunaModel."""
-        try:
-            pipe = getattr(pruna_model, "pipeline", None)
-            if pipe is None:
-                pipe = getattr(pruna_model, "model", None)
-            if pipe is None:
-                print("[LoRAHandler] Unable to access underlying Flux pipeline from PrunaModel")
-            return pipe
-        except Exception as exc:
-            print(f"[LoRAHandler] Failed retrieving Flux pipeline: {exc}")
-            return None
+    def _get_diffusers_pipe(self, pipeline: FluxPipeline) -> Optional[FluxPipeline]:
+        """Return the underlying Diffusers pipeline if available."""
+        if isinstance(pipeline, FluxPipeline):
+            return pipeline
+        pipe = getattr(pipeline, "pipeline", None)
+        if pipe is None:
+            pipe = getattr(pipeline, "model", None)
+        if pipe is None:
+            print("[LoRAHandler] Unable to access underlying Flux pipeline instance")
+        return pipe
 
-    def apply_loras_to_pipe(self, pipe: PrunaModel, lora_names: List[str], lora_scales: List[float]) -> bool:
+    def apply_loras_to_pipe(self, pipe: FluxPipeline, lora_names: List[str], lora_scales: List[float]) -> bool:
         """
         Apply specified LoRAs to the pipeline.
 
@@ -210,7 +207,8 @@ class LoRAHandler:
             # Unload existing LoRAs before applying new ones
             self.clear_adapters(pipe)
 
-            applied_adapters = []
+            adapter_names: List[str] = []
+            adapter_scales: List[float] = []
 
             for name, scale in zip(lora_names, lora_scales):
                 adapter_name = None
@@ -223,40 +221,37 @@ class LoRAHandler:
                     raise RuntimeError(f"LoRA '{name}' not found in loaded cache; ensure load_lora() succeeded.")
 
                 try:
-                    # Load LoRA weights onto the Diffusers pipeline
                     diffusers_pipe.load_lora_weights(
                         adapter_path=self.loaded_loras[adapter_name]['path'],
                         adapter_name=adapter_name,
-                        low_cpu_mem_usage=True
+                        low_cpu_mem_usage=True,
                     )
-
-                    # Configure LoRA scaling
                     scale_value = scale if not isinstance(scale, list) else scale[0]
-                    diffusers_pipe.set_adapters({adapter_name: scale_value})
-
-                    applied_adapters.append({
-                        'name': name,
-                        'adapter_name': adapter_name,
-                        'scale': scale_value
-                    })
-
-                    print(f"[LoRAHandler] Applied LoRA {name} with scale {scale_value}")
+                    adapter_names.append(adapter_name)
+                    adapter_scales.append(scale_value)
+                    print(f"[LoRAHandler] Prepared LoRA {name} with scale {scale_value}")
                 except Exception as exc:
                     raise RuntimeError(f"Failed to apply LoRA '{name}': {exc}") from exc
 
-            if len(applied_adapters) != len(lora_names):
-                missing = set(lora_names) - {adapter['name'] for adapter in applied_adapters}
-                raise RuntimeError(f"Not all LoRAs were applied successfully: {missing}")
+            if adapter_names:
+                diffusers_pipe.set_adapters(adapter_names, adapter_scales)
 
-            self.current_adapters = applied_adapters
-            print(f"[LoRAHandler] Successfully applied {len(applied_adapters)} LoRAs")
+            self.current_adapters = [
+                {
+                    'name': name,
+                    'adapter_name': adapter_name,
+                    'scale': scale if not isinstance(scale, list) else scale[0]
+                }
+                for name, adapter_name, scale in zip(lora_names, adapter_names, adapter_scales)
+            ]
+            print(f"[LoRAHandler] Successfully applied {len(adapter_names)} LoRAs")
             return True
 
         except Exception as e:
             print(f"[LoRAHandler] Error applying LoRAs: {e}")
             return False
 
-    def clear_adapters(self, pipe: PrunaModel):
+    def clear_adapters(self, pipe: FluxPipeline):
         """Clear any currently applied LoRA adapters."""
         try:
             diffusers_pipe = self._get_diffusers_pipe(pipe)
@@ -286,18 +281,36 @@ class LoRAHandler:
 
 class ModelHandler:
     def __init__(self):
-        self.pipe = None
+        self.pipe: Optional[FluxPipeline] = None
         self.lora_handler = LoRAHandler()
         self.load_models()
 
     def load_models(self):
-        # Load FLUX.1-dev pipeline from cache using identifier
+        model_id = os.environ.get("HF_MODEL", "black-forest-labs/FLUX.1-dev")
+        local_files_only = os.environ.get("HF_LOCAL_FILES_ONLY", "0") == "1"
+        use_auth_token = os.environ.get("HF_AUTH_TOKEN")
 
-        self.pipe = PrunaModel.from_hub(
-            os.environ.get("HF_MODEL", "PrunaAI/FLUX.1-dev-smashed-no-compile"),
-            local_files_only=True,
-        )
-        self.pipe.move_to_device("cuda")
+        torch_dtype = torch.float16 if torch.cuda.is_available() else torch.float32
+
+        load_kwargs = {
+            "torch_dtype": torch_dtype,
+            "use_safetensors": True,
+            "local_files_only": local_files_only,
+        }
+        if use_auth_token:
+            load_kwargs["use_auth_token"] = use_auth_token
+
+        print(f"[ModelHandler] Loading Flux pipeline: {model_id} (local_only={local_files_only})")
+
+        self.pipe = FluxPipeline.from_pretrained(model_id, **load_kwargs)
+
+        if torch.cuda.is_available():
+            self.pipe.to("cuda")
+        else:
+            self.pipe.to("cpu")
+
+        self.pipe.set_progress_bar_config(disable=True)
+        self.pipe.enable_attention_slicing()
 
         # Clean up old cached LoRAs on startup
         self.lora_handler.cleanup_cache()
